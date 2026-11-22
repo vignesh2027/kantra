@@ -1879,6 +1879,11 @@ func TestSetSettingsFromProfile_RelativePath(t *testing.T) {
 			path:      filepath.Join("app", ".konveyor", "profiles", "test-profile", "profile.yaml"),
 			wantInput: "app",
 		},
+		{
+			name:      "profile that is itself named .konveyor",
+			path:      filepath.Join("app", ".konveyor", "profiles", ".konveyor", "profile.yaml"),
+			wantInput: "app",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

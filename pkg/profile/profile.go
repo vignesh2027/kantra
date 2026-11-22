@@ -78,17 +78,20 @@ func UnmarshalProfile(path string) (*hubapi.AnalysisProfile, error) {
 	return &prof, nil
 }
 
-// dirBeforeKonveyor returns the directory that holds the .konveyor directory
-// the profile at path lives in. For a relative path that starts with .konveyor
-// this is ".".
+// dirBeforeKonveyor returns the directory that holds the outermost .konveyor
+// directory in path, which is the project the profile belongs to. Taking the
+// outermost one keeps a profile that is itself named .konveyor from being
+// mistaken for the project's directory. For a relative path that starts with
+// .konveyor this is ".".
 func dirBeforeKonveyor(path string) (string, bool) {
-	for dir := filepath.Dir(path); ; {
+	found, ok := "", false
+	for dir := filepath.Dir(filepath.Clean(path)); ; {
 		if filepath.Base(dir) == ".konveyor" {
-			return filepath.Dir(dir), true
+			found, ok = filepath.Dir(dir), true
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return "", false
+			return found, ok
 		}
 		dir = parent
 	}
